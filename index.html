@@ -6,80 +6,100 @@
     <title>PIN brute-force – live demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        /* =====  DARK-TECH FACELIFT  ===== */
         :root {
-            --accent: #0066ff;
-            --bg: #f2f6ff;
-            --card: #ffffff;
-            --text: #112244;
-            --sub: #556688;
+            --accent: #00f2ea;
+            /* electric cyan */
+            --good: #00ff9d;
+            /* vibrant green */
+            --bg: #0d1117;
+            /* github-dark */
+            --card: #161b22;
+            /* elevated panel */
+            --text: #e6edf3;
+            /* soft white */
+            --sub: #7d8590;
+            /* muted grey */
+            --border: #30363d;
+            /* subtle borders */
+            --glow: 0 0 8px var(--accent), 0 0 16px var(--accent);
         }
 
         * {
-            box-sizing: border-box
+            box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 2rem
+            padding: 2rem;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, .04) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--text);
         }
 
         .card {
             width: 100%;
             max-width: 560px;
             background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, .12);
-            padding: 3rem 3.5rem
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .6);
+            padding: 3rem 3.5rem;
         }
 
         h1 {
             font-size: 2.25rem;
-            margin: 0 0 .5rem
+            margin: 0 0 .5rem;
+            letter-spacing: .5px;
         }
 
         .sub {
             font-size: 1.1rem;
             color: var(--sub);
-            margin-bottom: 2.5rem
+            margin-bottom: 2.5rem;
         }
 
         label {
             display: block;
             font-weight: 600;
-            margin-bottom: .4rem
+            margin-bottom: .4rem;
         }
 
         input[type=number] {
             width: 100%;
             font-size: 2rem;
             padding: .6rem 1rem;
-            border: 2px solid #dde4f0;
+            background: #010409;
+            color: var(--accent);
+            border: 2px solid var(--border);
             border-radius: 8px;
-            transition: border .2s
+            caret-color: var(--accent);
+            transition: border .2s, box-shadow .2s;
         }
 
         input[type=number]:focus {
             outline: none;
-            border-color: var(--accent)
+            border-color: var(--accent);
+            box-shadow: var(--glow);
         }
 
         .slider-box {
-            margin-top: 2rem
+            margin-top: 2rem;
         }
 
         input[type=range] {
             width: 100%;
             -webkit-appearance: none;
             height: 6px;
-            background: #dde4f0;
-            border-radius: 3px
+            background: var(--border);
+            border-radius: 3px;
         }
 
         input[type=range]::-webkit-slider-thumb {
@@ -88,7 +108,8 @@
             height: 22px;
             background: var(--accent);
             border-radius: 50%;
-            cursor: pointer
+            cursor: pointer;
+            box-shadow: var(--glow);
         }
 
         input[type=range]::-moz-range-thumb {
@@ -97,35 +118,56 @@
             background: var(--accent);
             border-radius: 50%;
             cursor: pointer;
-            border: none
+            border: none;
+            box-shadow: var(--glow);
         }
 
         .big-time {
             font-size: 4rem;
             font-weight: 700;
             margin: 2rem 0 .3rem;
-            letter-spacing: -1px
+            letter-spacing: -1px;
+            color: var(--good);
+            text-shadow: 0 0 8px var(--good);
         }
 
         .bar {
             height: 10px;
-            background: #dde4f0;
+            background: var(--border);
             border-radius: 5px;
             overflow: hidden;
-            margin-top: 1rem
+            margin-top: 1rem;
         }
 
         .bar-inner {
             height: 100%;
             background: var(--accent);
             width: 0%;
-            transition: width .3s
+            transition: width .3s;
+            box-shadow: var(--glow);
         }
 
         .note {
             margin-top: 1.5rem;
             font-size: .9rem;
-            color: var(--sub)
+            color: var(--sub);
+        }
+
+        .btn.end {
+            background: var(--good);
+            color: #000;
+            font-weight: 700;
+            font-size: .8rem;
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: .6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform .15s;
+        }
+
+        .btn.end:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -151,7 +193,10 @@
 
         <p class="note">Measured on Digispark + Android lock-screen (78 ms/try). Drag slider to test faster/slower
             hardware.</p>
+        <div class="btn end" style="float: font-size:0.8rem;  margin: top 50px;"><a href="bruteforce.html"
+                style="text-decoration:none; color:white;">Bruteforce Simulator</a></div>
     </div>
+
 
     <script>
         const pinInput = document.getElementById('pin');
