@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Live PIN brute-force demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --good: #00c853;
+            --bad: #ff3d00;
+            --accent: #0066ff;
+            --bg: #1865d9;
+            --card: #fff
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem
+        }
+
+        .card {
+            width: 100%;
+            max-width: 640px;
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .12);
+            padding: 2rem
+        }
+
+        h1 {
+            margin: 0 0 .5rem;
+            font-size: 1.75rem
+        }
+
+        .sub {
+            color: #556688;
+            margin-bottom: 1.5rem
+        }
+
+        label {
+            font-weight: 600
+        }
+
+        input[type=number] {
+            width: 100%;
+            font-size: 2rem;
+            padding: .5rem 1rem;
+            border: 2px solid #dde4f0;
+            border-radius: 8px
+        }
+
+        .btn {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            font-size: 1.3rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background .2s
+        }
+
+        .btn.start {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .btn.end {
+            background: #0a7f35;
+            color: #fff
+        }
+
+        .btn.stop {
+            background: #ff3d00;
+            color: #fff
+        }
+
+        .log {
+            height: 280px;
+            overflow-y: auto;
+            border: 1px solid #ce1414;
+            border-radius: 6px;
+            padding: .5rem 1rem;
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 1.1rem;
+            line-height: 1.6
+        }
+
+        .log .ok {
+            color: var(--good)
+        }
+
+        .log .fail {
+            color: var(--bad)
+        }
+
+        .time {
+            font-size: 1.2rem;
+            margin-top: 1rem
+        }
+    </style>
+    <style>
+        /* ======  DARK-TECH THEME  ====== */
+        :root {
+            --bg: #0d1117;
+            /* deep github-dark */
+            --card: #161b22;
+            /* slightly lighter panel */
+            --accent: #00f2ea;
+            /* electric cyan */
+            --good: #00ff9d;
+            /* vibrant green */
+            --bad: #ff3d6c;
+            /* hot pink-red */
+            --text: #e6edf3;
+            /* soft white */
+            --text-dim: #7d8590;
+            /* muted grey */
+            --border: #30363d;
+            /* subtle borders */
+            --glow: 0 0 8px var(--accent), 0 0 16px var(--accent);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, .04) 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--text);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 640px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
+            padding: 2rem;
+        }
+
+        h1 {
+            margin: 0 0 .5rem;
+            font-size: 1.9rem;
+            letter-spacing: .5px;
+        }
+
+        .sub {
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: .5px;
+        }
+
+        input[type=number] {
+            width: 100%;
+            font-size: 2rem;
+            padding: .6rem 1rem;
+            margin-top: .5rem;
+            background: #010409;
+            color: var(--accent);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            caret-color: var(--accent);
+            transition: border .2s, box-shadow .2s;
+        }
+
+        input[type=number]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+
+        .btn {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            font-size: 1.3rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+            user-select: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.start {
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            box-shadow: var(--glow);
+        }
+
+        .btn.stop {
+            background: var(--bad);
+            color: #fff;
+            box-shadow: 0 0 8px var(--bad);
+        }
+
+        .btn.end {
+            background: var(--good);
+            color: #000;
+            font-weight: 700;
+            font-size: .8rem;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .log {
+            height: 280px;
+            overflow-y: auto;
+            background: #010409;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: .75rem 1rem;
+            font-family: "Fira Code", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .log .ok {
+            color: var(--good);
+            text-shadow: 0 0 4px var(--good);
+        }
+
+        .log .fail {
+            color: var(--bad);
+            text-shadow: 0 0 4px var(--bad);
+        }
+
+        .time {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: var(--text-dim);
+        }
+
+        /* tiny scrollbar tweak */
+        .log::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .log::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .log::-webkit-scrollbar-track {
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <h1>Live 4-digit PIN brute-force demo</h1>
+        <p class="sub">Set the secret PIN, click “Start listening”, then plug the Digispark in.</p>
+
+        <label for="target">Secret 4-digit PIN</label>
+        <input type="number" id="target" min="0" max="9999" step="1" placeholder="0000" value="4537">
+
+        <div class="btn start" id="toggle">Start listening</div>
+
+        <div class="log" id="log"></div>
+        <div class="time" id="time"></div>
+        <div class="btn end" style="float:; font-size:0.8rem;  margin: top 50px;"><a href="index.html"
+                style="text-decoration:none; color:white;">Check estimated time</a></div>
+    </div>
+
+
+
+    <script>
+        const targetInput = document.getElementById('target');
+        const toggleBtn = document.getElementById('toggle');
+        const logBox = document.getElementById('log');
+        const timeBox = document.getElementById('time');
+
+        let listening = false;
+        let buffer = '';          // builds 4-digit codes
+        let startTime = 0;
+        let tries = 0;
+
+        function fmt(ms) {
+            const s = Math.round(ms / 1000);
+            if (s < 60) return s + ' s';
+            const m = Math.floor(s / 60);
+            const r = s % 60;
+            return m + ' min ' + (r ? r + ' s' : '');
+        }
+
+        function addLine(code, ok) {
+            const row = document.createElement('div');
+            row.textContent = code + (ok ? ' ✅' : ' ❌');
+            row.className = ok ? 'ok' : 'fail';
+            logBox.appendChild(row);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function keyHandler(e) {
+            if (!listening) return;
+            const ch = e.key;
+            if (ch >= '0' && ch <= '9') {
+                buffer += ch;
+                if (buffer.length === 4) {
+                    tries++;
+                    const target = targetInput.value.padStart(4, '0');
+                    const hit = buffer === target;
+                    addLine(buffer, hit);
+                    if (hit) {
+                        listening = false;
+                        toggleBtn.textContent = 'Finished — start again?';
+                        toggleBtn.className = 'btn start';
+                        const elapsed = Date.now() - startTime;
+                        timeBox.textContent = `Cracked in ${fmt(elapsed)} (${tries} tries).`;
+                        buffer = '';
+                        return;
+                    }
+                    buffer = '';
+                }
+            }
+        }
+
+        toggleBtn.onclick = () => {
+            if (!listening) {
+                listening = true;
+                buffer = '';
+                tries = 0;
+                startTime = Date.now();
+                logBox.innerHTML = '';
+                timeBox.textContent = '';
+                toggleBtn.textContent = 'Stop listening';
+                toggleBtn.className = 'btn stop';
+                targetInput.disabled = true;
+            } else {
+                listening = false;
+                toggleBtn.textContent = 'Start listening';
+                toggleBtn.className = 'btn start';
+                targetInput.disabled = false;
+            }
+        };
+
+        window.addEventListener('keydown', keyHandler);
+    </script>
+
+</body>
+
+</html>

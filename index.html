@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>PIN brute-force – live demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --accent: #0066ff;
+            --bg: #f2f6ff;
+            --card: #ffffff;
+            --text: #112244;
+            --sub: #556688;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem
+        }
+
+        .card {
+            width: 100%;
+            max-width: 560px;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .12);
+            padding: 3rem 3.5rem
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            margin: 0 0 .5rem
+        }
+
+        .sub {
+            font-size: 1.1rem;
+            color: var(--sub);
+            margin-bottom: 2.5rem
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .4rem
+        }
+
+        input[type=number] {
+            width: 100%;
+            font-size: 2rem;
+            padding: .6rem 1rem;
+            border: 2px solid #dde4f0;
+            border-radius: 8px;
+            transition: border .2s
+        }
+
+        input[type=number]:focus {
+            outline: none;
+            border-color: var(--accent)
+        }
+
+        .slider-box {
+            margin-top: 2rem
+        }
+
+        input[type=range] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #dde4f0;
+            border-radius: 3px
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none
+        }
+
+        .big-time {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 2rem 0 .3rem;
+            letter-spacing: -1px
+        }
+
+        .bar {
+            height: 10px;
+            background: #dde4f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 1rem
+        }
+
+        .bar-inner {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width .3s
+        }
+
+        .note {
+            margin-top: 1.5rem;
+            font-size: .9rem;
+            color: var(--sub)
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>Bruteforce Time Measurer</h1>
+        <p class="sub">Enter any 4-digit PIN and see how long a linear brute-force needs to reach it</p>
+
+        <label for="pin">4-digit PIN</label>
+        <input type="number" id="pin" min="0" max="9999" step="1" placeholder="0000" value=" 4537">
+
+        <div class="slider-box">
+            <label for="speed">Speed per try: <b id="speedval">13</b> ms</label>
+            <input type="range" id="speed" min="10" max="2000" step="10" value="78">
+        </div>
+
+        <div class="big-time" id="time">13 min 9 s</div>
+        <div class="bar">
+            <div class="bar-inner" id="bar"></div>
+        </div>
+
+        <p class="note">Measured on Digispark + Android lock-screen (78 ms/try). Drag slider to test faster/slower
+            hardware.</p>
+    </div>
+
+    <script>
+        const pinInput = document.getElementById('pin');
+        const speedSlider = document.getElementById('speed');
+        const speedval = document.getElementById('speedval');
+        const timeOut = document.getElementById('time');
+        const bar = document.getElementById('bar');
+
+        function fmt(ms) {
+            if (ms < 1000) return Math.round(ms) + ' ms';
+            const s = Math.round(ms / 1000);
+            if (s < 60) return s + ' s';
+            const m = Math.floor(s / 60);
+            const r = s % 60;
+            return m + ' min' + (r ? ' ' + r + ' s' : '');
+        }
+        function update() {
+            const pin = Math.max(0, Math.min(9999, Math.floor(Number(pinInput.value) || 0)));
+            const msPer = Number(speedSlider.value);
+            speedval.textContent = msPer;
+            const msTotal = pin * msPer;
+            timeOut.textContent = fmt(msTotal);
+            // visual bar (full range 0-9999)
+            bar.style.width = (pin / 9999 * 100).toFixed(2) + '%';
+        }
+        pinInput.addEventListener('input', update);
+        speedSlider.addEventListener('input', update);
+        update();
+    </script>
+
+</body>
+
+</html>
