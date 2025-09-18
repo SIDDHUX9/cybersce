@@ -1,75 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>PIN brute-force – live demo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Brute-Force Time Estimator</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#0d1117">
+    <link rel="manifest"
+        href="data:application/json;base64,eyJuYW1lIjoiQnJ1dGVmb3JjZSBUaW1lciIsInNob3J0X25hbWUiOiJCVCBUaW1lciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMGQxMTE3IiwidGhlbWVfY29sb3IiOiIjMGQxMTE3In0=">
     <style>
-        /* =====  DARK-TECH FACELIFT  ===== */
         :root {
             --accent: #00f2ea;
-            /* electric cyan */
             --good: #00ff9d;
-            /* vibrant green */
             --bg: #0d1117;
-            /* github-dark */
             --card: #161b22;
-            /* elevated panel */
             --text: #e6edf3;
-            /* soft white */
             --sub: #7d8590;
-            /* muted grey */
             --border: #30363d;
-            /* subtle borders */
             --glow: 0 0 8px var(--accent), 0 0 16px var(--accent);
+        }
+
+        @media (prefers-color-scheme:light) {
+            :root {
+                --bg: #ffffff;
+                --card: #f6f8fa;
+                --text: #0d1117;
+                --sub: #656d76;
+                --border: #d1d9e0;
+                --glow: 0 0 6px rgba(0, 119, 255, .35);
+            }
         }
 
         * {
             box-sizing: border-box;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif
         }
 
         body {
             margin: 0;
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            padding: 1rem;
             background: var(--bg);
-            background-image:
-                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, .04) 1px, transparent 0);
-            background-size: 24px 24px;
             color: var(--text);
+            background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, .04) 1px, transparent 0);
+            background-size: 24px 24px
         }
 
         .card {
             width: 100%;
-            max-width: 560px;
+            max-width: 640px;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, .6);
-            padding: 3rem 3.5rem;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .6)
         }
 
         h1 {
-            font-size: 2.25rem;
-            margin: 0 0 .5rem;
-            letter-spacing: .5px;
+            font-size: 2rem;
+            margin: 0 0 .25rem
         }
 
         .sub {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--sub);
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.5rem
         }
 
         label {
             display: block;
             font-weight: 600;
-            margin-bottom: .4rem;
+            margin-bottom: .3rem
         }
 
         input[type=number] {
@@ -81,25 +85,36 @@
             border: 2px solid var(--border);
             border-radius: 8px;
             caret-color: var(--accent);
-            transition: border .2s, box-shadow .2s;
+            transition: border .2s, box-shadow .2s
         }
 
         input[type=number]:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: var(--glow);
+            box-shadow: var(--glow)
         }
 
-        .slider-box {
-            margin-top: 2rem;
+        .row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem
+        }
+
+        .row>div {
+            flex: 1
+        }
+
+        select,
+        input[type=range] {
+            width: 100%
         }
 
         input[type=range] {
-            width: 100%;
             -webkit-appearance: none;
             height: 6px;
             background: var(--border);
-            border-radius: 3px;
+            border-radius: 3px
         }
 
         input[type=range]::-webkit-slider-thumb {
@@ -109,26 +124,15 @@
             background: var(--accent);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: var(--glow);
-        }
-
-        input[type=range]::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-            box-shadow: var(--glow);
+            box-shadow: var(--glow)
         }
 
         .big-time {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            margin: 2rem 0 .3rem;
-            letter-spacing: -1px;
+            margin: .5rem 0;
             color: var(--good);
-            text-shadow: 0 0 8px var(--good);
+            text-shadow: 0 0 8px var(--good)
         }
 
         .bar {
@@ -136,97 +140,154 @@
             background: var(--border);
             border-radius: 5px;
             overflow: hidden;
-            margin-top: 1rem;
+            margin-top: .75rem
         }
 
         .bar-inner {
             height: 100%;
             background: var(--accent);
-            width: 0%;
-            transition: width .3s;
-            box-shadow: var(--glow);
+            width: 0;
+            transition: width .2s;
+            box-shadow: var(--glow)
         }
 
-        .note {
-            margin-top: 1.5rem;
+        .entropy {
             font-size: .9rem;
-            color: var(--sub);
+            margin-top: .5rem
         }
 
-        .btn.end {
-            background: var(--good);
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: var(--accent);
             color: #000;
             font-weight: 700;
             font-size: .8rem;
-            display: inline-block;
-            margin-top: 1.5rem;
             padding: .6rem 1.2rem;
             border-radius: 8px;
-            text-decoration: none;
+            border: none;
+            cursor: pointer;
             transition: transform .15s;
+            text-decoration: none
         }
 
-        .btn.end:hover {
-            transform: translateY(-2px);
+        .btn:hover {
+            transform: translateY(-2px)
+        }
+
+        .btn.good {
+            background: var(--good)
+        }
+
+        .controls {
+            display: flex;
+            gap: .5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap
+        }
+
+        .note {
+            font-size: .8rem;
+            color: var(--sub);
+            margin-top: 1rem
         }
     </style>
 </head>
 
 <body>
-
     <div class="card">
-        <h1>Bruteforce Time Measurer</h1>
-        <p class="sub">Enter any 4-digit PIN and see how long a linear brute-force needs to reach it</p>
+        <h1>Brute-Force Time Estimator</h1>
+        <p class="sub">Enter a 4-digit PIN and see how long a linear brute-force would take</p>
 
         <label for="pin">4-digit PIN</label>
-        <input type="number" id="pin" min="0" max="9999" step="1" placeholder="0000" value=" 4537">
+        <input type="number" id="pin" min="0" max="9999" step="1" placeholder="0000" value="4537">
 
-        <div class="slider-box">
-            <label for="speed">Speed per try: <b id="speedval">13</b> ms</label>
-            <input type="range" id="speed" min="10" max="2000" step="10" value="78">
+        <div class="row">
+            <div>
+                <label for="preset">Hardware preset</label>
+                <select id="preset">
+                    <option value="78" selected>Digispark + Android (78 ms)</option>
+                    <option value="5">USB-Rubber-Ducky (5 ms)</option>
+                    <option value="0.05">Fast hashcat GPU (0.05 ms)</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            <div>
+                <label for="speed">Custom ms / try</label>
+                <input type="range" id="speed" min="0.01" max="2000" step="0.01" value="78">
+            </div>
         </div>
 
         <div class="big-time" id="time">13 min 9 s</div>
+        <div class="entropy" id="entropy">Entropy: 13.29 bits – Strength: 🔑 Medium</div>
         <div class="bar">
             <div class="bar-inner" id="bar"></div>
         </div>
 
-        <p class="note">Measured on Digispark + Android lock-screen (78 ms/try). Drag slider to test faster/slower
-            hardware.</p>
-        <div class="btn end" style="float: font-size:0.8rem;  margin: top 50px;"><a href="bruteforce.html"
-                style="text-decoration:none; color:white;">Bruteforce Simulator</a></div>
+        <div class="controls">
+            <a class="btn good" href="bruteforce.html">▶ Open Brute-Force Simulator</a>
+            <button class="btn" id="copy">📋 Copy result</button>
+            <button class="btn" id="share">🔗 Share</button>
+        </div>
     </div>
 
-
     <script>
-        const pinInput = document.getElementById('pin');
-        const speedSlider = document.getElementById('speed');
-        const speedval = document.getElementById('speedval');
-        const timeOut = document.getElementById('time');
-        const bar = document.getElementById('bar');
+        const $ = id => document.getElementById(id);
+        const pinInput = $('pin');
+        const presetSel = $('preset');
+        const speedRange = $('speed');
+        const timeOut = $('time');
+        const bar = $('bar');
+        const entropyOut = $('entropy');
+        const copyBtn = $('copy');
+        const shareBtn = $('share');
 
         function fmt(ms) {
             if (ms < 1000) return Math.round(ms) + ' ms';
             const s = Math.round(ms / 1000);
             if (s < 60) return s + ' s';
-            const m = Math.floor(s / 60);
-            const r = s % 60;
+            const m = Math.floor(s / 60), r = s % 60;
             return m + ' min' + (r ? ' ' + r + ' s' : '');
         }
-        function update() {
+        function calc() {
             const pin = Math.max(0, Math.min(9999, Math.floor(Number(pinInput.value) || 0)));
-            const msPer = Number(speedSlider.value);
-            speedval.textContent = msPer;
+            const msPer = Number(speedRange.value);
             const msTotal = pin * msPer;
             timeOut.textContent = fmt(msTotal);
-            // visual bar (full range 0-9999)
             bar.style.width = (pin / 9999 * 100).toFixed(2) + '%';
+            const entropy = Math.log2(10000);
+            const strength = pin == 0 ? 'None' : pin < 100 ? 'Very weak' : pin < 1000 ? 'Weak' : pin < 5000 ? 'Medium' : pin < 9000 ? 'Strong' : 'Very strong';
+            entropyOut.textContent = `Entropy: ${entropy.toFixed(2)} bits – Strength: ${strength}`;
         }
-        pinInput.addEventListener('input', update);
-        speedSlider.addEventListener('input', update);
-        update();
+        pinInput.addEventListener('input', calc);
+        speedRange.addEventListener('input', () => {
+            presetSel.value = 'custom'; calc();
+        });
+        presetSel.addEventListener('change', e => {
+            if (e.target.value !== 'custom') { speedRange.value = e.target.value; calc(); }
+        });
+        copyBtn.addEventListener('click', () => {
+            const text = `PIN ${pinInput.value} needs ${timeOut.textContent} to brute-force at ${speedRange.value} ms/try.`;
+            navigator.clipboard.writeText(text);
+        });
+        shareBtn.addEventListener('click', () => {
+            const url = new URL(location);
+            url.searchParams.set('pin', pinInput.value);
+            url.searchParams.set('ms', speedRange.value);
+            navigator.share ? navigator.share({ title: 'Brute-Force Time', url: url.toString() }) : navigator.clipboard.writeText(url.toString());
+        });
+        /* url params */
+        const params = new URLSearchParams(location.search);
+        if (params.has('pin')) pinInput.value = params.get('pin');
+        if (params.has('ms')) { speedRange.value = params.get('ms'); presetSel.value = 'custom'; }
+        calc();
+        /* pwa */
+        if ('serviceWorker' in navigator) {
+            const sw = `self.addEventListener('install',e=>e.waitUntil(skipWaiting()));self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request)));`;
+            navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw], { type: 'application/javascript' })));
+        }
     </script>
-
 </body>
 
 </html>
