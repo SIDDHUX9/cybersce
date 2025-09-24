@@ -170,12 +170,12 @@
 <body>
     <div class="card">
         <h1>Live 4-digit PIN brute-force demo</h1>
-        <p class="sub">Set the secret PIN, click “Start listening”, then plug the Digispark in.</p>
+        <p class="sub">Set the secret PIN, click “Start Cracking”, then plug the Digispark in.</p>
 
         <label for="target">Secret 4-digit PIN</label>
         <input type="number" id="target" min="0" max="9999" step="1" placeholder="0000" value="4537">
 
-        <div class="btn start" id="toggle">Start listening</div>
+        <div class="btn start" id="toggle">Start Cracking</div>
 
         <div class="log" id="log"></div>
         <div class="time" id="time"></div>
@@ -189,7 +189,7 @@
         const logBox = document.getElementById('log');
         const timeBox = document.getElementById('time');
 
-        let listening = false;
+        let Cracking = false;
         let buffer = '';          // builds 4-digit codes
         let startTime = 0;           // remains 0 until first digit arrives
         let tries = 0;
@@ -213,7 +213,7 @@
         }
 
         function keyHandler(e) {
-            if (!listening) return;
+            if (!Cracking) return;
             const ch = e.key;
             if (ch >= '0' && ch <= '9') {
                 /*  start timer on the very first keystroke  */
@@ -226,7 +226,7 @@
                     const hit = buffer === target;
                     addLine(buffer, hit);
                     if (hit) {
-                        listening = false;
+                        Cracking = false;
                         toggleBtn.textContent = 'Password Cracked - start again?';
                         toggleBtn.className = 'btn start';
                         const realElapsed = Date.now() - startTime;
@@ -243,19 +243,19 @@
         }
 
         toggleBtn.onclick = () => {
-            if (!listening) {
-                listening = true;
+            if (!Cracking) {
+                Cracking = true;
                 buffer = '';
                 tries = 0;
                 startTime = 0;          // reset timer flag
                 logBox.innerHTML = '';
                 timeBox.textContent = '';
-                toggleBtn.textContent = 'Stop listening';
+                toggleBtn.textContent = 'Stop Cracking';
                 toggleBtn.className = 'btn stop';
                 targetInput.disabled = true;
             } else {
-                listening = false;
-                toggleBtn.textContent = 'Start listening';
+                Cracking = false;
+                toggleBtn.textContent = 'Start Cracking';
                 toggleBtn.className = 'btn start';
                 targetInput.disabled = false;
             }
