@@ -170,12 +170,12 @@
 <body>
     <div class="card">
         <h1>Live 4-digit PIN brute-force demo</h1>
-        <p class="sub">Set the secret PIN, click “Start Cracking”, then plug the Digispark in.</p>
+        <p class="sub">Set the secret PIN, click “Start listening”, then plug the Digispark in.</p>
 
         <label for="target">Secret 4-digit PIN</label>
         <input type="number" id="target" min="0" max="9999" step="1" placeholder="0000" value="4537">
 
-        <div class="btn start" id="toggle">Start Cracking</div>
+        <div class="btn start" id="toggle">Start listening</div>
 
         <div class="log" id="log"></div>
         <div class="time" id="time"></div>
@@ -189,7 +189,7 @@
         const logBox = document.getElementById('log');
         const timeBox = document.getElementById('time');
 
-        let Cracking = false;
+        let listening = false;
         let buffer = '';          // builds 4-digit codes
         let startTime = 0;           // remains 0 until first digit arrives
         let tries = 0;
@@ -266,4 +266,3 @@
 </body>
 
 </html>
-
